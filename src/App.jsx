@@ -3,16 +3,34 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from '
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-// --- DUMMY DATA (Server အစား Data များကို ဒီမှာ ယာယီသိမ်းထားမယ်) ---
-const VALID_KEYS = ["GF-1234", "VIP-9999", "GOLD-2025"];
+// --- GLOBAL STYLES & ANIMATIONS ---
+const globalStyles = `
+  /* ငါးကလေး ကူးခတ်နေသော Animation (Swimming) */
+  @keyframes swimFloat {
+    0% { transform: translateY(0) rotate(0deg); }
+    25% { transform: translateY(-8px) rotate(2deg); } /* အပေါ်တက်ပြီး ညာစောင်း */
+    50% { transform: translateY(0) rotate(0deg); }
+    75% { transform: translateY(8px) rotate(-2deg); } /* အောက်ဆင်းပြီး ဘယ်စောင်း */
+    100% { transform: translateY(0) rotate(0deg); }
+  }
+  
+  /* Glass Card Effect */
+  .glass-card {
+    background: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 215, 0, 0.3);
+  }
+`;
 
+// --- DATA ---
+const VALID_KEYS = ["GF-1234", "VIP-9999", "GOLD-2025"];
 const PRODUCT_DATA = [
     {
         id: 1,
         name: "Classic Ruby Earrings",
         image: "/assets/earring1.jpg",
         audio: "/assets/earring1.mp3",
-        description: "ရိုးရှင်းပြီး ခမ်းနားသော ပတ္တမြား နားကပ်တစ်ရံ။ အရည်အသွေးမြင့် မိုးကုတ်ပတ္တမြားကို ရွှေသားအပြည့်ဖြင့် ပုံဖော်ထားပြီး၊ ပွဲတက်ဝတ်ဆင်ရန် အထူးသင့်လျော်ပါသည်။ Gold Fish ၏ Signature Design ဖြစ်သည်။",
+        description: "ရိုးရှင်းပြီး ခမ်းနားသော ပတ္တမြား နားကပ်တစ်ရံ။ မိုးကုတ်ပတ္တမြားကို ရွှေသားအပြည့်ဖြင့် ပုံဖော်ထားသည်။",
         gold_weight: "1 ကျပ်သား (ခန့်မှန်း)",
         gem_type: "Ruby (Mogok)"
     },
@@ -21,22 +39,20 @@ const PRODUCT_DATA = [
         name: "Elegant Ruby Ring",
         image: "/assets/ring1.jpg",
         audio: "/assets/ring1.mp3",
-        description: "ခေတ်ဆန်သော ဒီဇိုင်းနှင့် ပတ္တမြားတို့၏ ပေါင်းစပ်မှု။ လက်ညှိုး သို့မဟုတ် လက်သူြ​ကွယ်တွင် ဝတ်ဆင်ပါက ထင်ပေါ်စေမည့် ဒီဇိုင်း။ အောက်ခြေတွင် စိန်နုများဖြင့် အလှဆင်ထားပါသည်။",
-        gold_weight : "0.8 ကျပ်သား",
+        description: "ခေတ်ဆန်သော ဒီဇိုင်းနှင့် ပတ္တမြားတို့၏ ပေါင်းစပ်မှု။ စိန်နုများဖြင့် အလှဆင်ထားပါသည်။",
+        gold_weight: "0.8 ကျပ်သား",
         gem_type: "Ruby & Diamonds"
     }
 ];
 
-// --- 1. Login Page ---
+// --- 1. Login Page (Swimming Logo) ---
 function Login({ setAuthKey }) {
   const [inputKey, setInputKey] = useState('');
   const navigate = useNavigate();
 
   const handleLogin = () => {
-    // Server မခေါ်တော့ဘဲ ဒီမှာပဲ စစ်မယ်
     if (VALID_KEYS.includes(inputKey)) {
         setAuthKey(inputKey);
-        // Data ကို localStorage ထဲ ထည့်ပေးလိုက်မယ်
         localStorage.setItem('userProducts', JSON.stringify(PRODUCT_DATA));
         navigate('/welcome');
     } else {
@@ -45,26 +61,44 @@ function Login({ setAuthKey }) {
   };
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-dark text-warning">
-      <img src="/assets/logo.png" alt="Logo" style={{width: '120px', borderRadius: '20px', marginBottom: '20px', boxShadow: '0 0 15px #FFD700'}} 
+    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-black overflow-hidden position-relative">
+      <style>{globalStyles}</style>
+      
+      {/* Swimming Logo */}
+      <img src="/assets/logo.png" alt="Logo" 
+           style={{
+             width: '200px', 
+             marginBottom: '30px', 
+             borderRadius: '35px',
+             // Animation ကို ဒီမှာ ချိတ်ထားတယ် (၄ စက္ကန့်ကြာမယ်၊ အဆုံးမရှိ လည်ပတ်မယ်)
+             animation: 'swimFloat 4s infinite ease-in-out',
+             boxShadow: '0 0 30px rgba(255, 215, 0, 0.2)' // ရွှေရောင်ရေလွှာ အရိပ်
+           }} 
            onError={(e) => e.target.style.display='none'} />
-      <h1 className="display-1 fw-bold">GOLD FISH</h1>
-      <p className="lead text-white">Exclusive Jewellery Club</p>
-      <div className="mt-4 w-75" style={{maxWidth: '300px'}}>
+
+      <h1 className="display-3 fw-bold text-warning mb-2" style={{fontFamily: 'serif', letterSpacing: '3px'}}>GOLD FISH</h1>
+      <p className="lead text-light opacity-75 mb-5" style={{letterSpacing: '2px'}}>EXCLUSIVE JEWELLERY CLUB</p>
+      
+      <div className="w-75" style={{maxWidth: '320px', zIndex: 10}}>
         <input 
           type="text" 
-          className="form-control text-center py-2" 
-          placeholder="Enter VIP Key"
+          className="form-control text-center py-3 fs-5 bg-dark text-warning border-warning" 
+          placeholder="ENTER VIP KEY"
           value={inputKey}
           onChange={(e) => setInputKey(e.target.value)}
+          style={{borderRadius: '50px'}}
         />
-        <button className="btn btn-warning w-100 mt-3 fw-bold" onClick={handleLogin}>ENTER CLUB</button>
+        <button className="btn btn-warning w-100 mt-4 py-3 fw-bold rounded-pill shadow-lg" 
+                onClick={handleLogin}
+                style={{letterSpacing: '2px', fontSize: '1.1rem'}}>
+          UNLOCK ACCESS
+        </button>
       </div>
     </div>
   );
 }
 
-// --- 2. Welcome Page ---
+// --- 2. Welcome Page (Static Full Screen - No Dizziness) ---
 function Welcome() {
   const navigate = useNavigate();
 
@@ -74,92 +108,89 @@ function Welcome() {
   }, []);
 
   return (
-    <div style={{
-      height: '100vh',
-      backgroundImage: 'url("/assets/shop_bg.jpg")',
-      backgroundSize: '100% auto',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center center',
-      backgroundColor: '#000000',
-      display: 'flex',
-      flexDirection: 'column',
-      alignItems: 'center',
-      justifyContent: 'center',
-      color: 'white',
-      textAlign: 'center'
-    }}>
+    <div className="position-relative vh-100 overflow-hidden d-flex flex-column align-items-center justify-content-center text-center">
       
-      <h1 className="mb-4" style={{
-        color: '#FFD700',
-        textShadow: '3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-        fontFamily: 'serif',
-        fontWeight: '900',
-        fontSize: '3.5rem',
-        letterSpacing: '2px',
-        transform: 'scaleY(1.1)'
-      }}>
-        မင်္ဂလာပါရှင့် 🙏🙏
-      </h1>
+      {/* Background (Fixed & Static) */}
+      <div className="position-absolute top-0 start-0 w-100 h-100" 
+           style={{
+             backgroundImage: 'url("/assets/shop_bg.jpg")',
+             backgroundSize: 'cover', // Screen အပြည့်
+             backgroundPosition: 'center', // အလယ်တည့်တည့်
+             zIndex: -1,
+             filter: 'brightness(0.6)' // စာဖတ်ရလွယ်အောင် နည်းနည်းမှိန်ထားမယ်
+           }}></div>
 
-      <p className="mb-5 px-4" style={{
-        color: '#000000',
-        textShadow: '1px 1px 0 #FFD700, -1px -1px 0 #FFD700, 1px -1px 0 #FFD700, -1px 1px 0 #FFD700',
-        fontFamily: '"Playfair Display", "Times New Roman", serif',
-        fontStyle: 'italic',
-        fontWeight: 'bold',
-        fontSize: '1.2rem',
-        lineHeight: '1.8',
-        letterSpacing: '1px'
-      }}>
-        GOLD FISH Gems & Jewellery မှ နွေးထွေးစွာ ကြိုဆိုပါတယ်။ <br/>
-        လူကြီးမင်းစိတ်ကြိုက် ဒီဇိုင်းများကို ကြည့်ရှုကာ  ရွေးချယ် မှာယူနိုင်ပါပြီ။
-      </p>
+      {/* Content */}
+      <div style={{zIndex: 10, width: '90%'}}>
+        <h1 className="mb-4" style={{
+          color: '#FFD700',
+          textShadow: '3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
+          fontFamily: 'serif', fontWeight: '900', fontSize: '3rem', transform: 'scaleY(1.1)'
+        }}>
+          မင်္ဂလာပါရှင့် 🙏
+        </h1>
 
-      <div className="d-grid gap-3 col-8 mx-auto">
-        <button className="btn btn-warning btn-lg fw-bold shadow" onClick={() => navigate('/catalog')}>
-          ဆိုင်အတွင်းသို့ ဝင်ေ​ရာက်ကာ ြ​ကည့်ရှုမည် (View Catalog)
-        </button>
-        <button className="btn btn-outline-light btn-lg" onClick={() => navigate('/')}>
-          ပြန်ထွက်မည် (Exit)
-        </button>
+        <p className="mb-5 px-2" style={{
+          color: '#000000',
+          textShadow: '1px 1px 0 #FFD700, -1px -1px 0 #FFD700, 1px -1px 0 #FFD700, -1px 1px 0 #FFD700',
+          fontFamily: '"Playfair Display", "Times New Roman", serif',
+          fontStyle: 'italic', fontWeight: 'bold', fontSize: '1.3rem', lineHeight: '1.8'
+        }}>
+          <span className="fw-bold" style={{textDecoration: 'underline'}}>GOLD FISH Gems & Jewellery</span> မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ်။
+        </p>
+
+        <div className="d-grid gap-3 col-10 mx-auto">
+          <button className="btn btn-warning btn-lg fw-bold shadow-lg rounded-pill glass-card text-white border-warning" 
+                  onClick={() => navigate('/catalog')}>
+            VIEW CATALOG
+          </button>
+          <button className="btn btn-outline-light btn-lg rounded-pill" onClick={() => navigate('/')}>
+            EXIT
+          </button>
+        </div>
       </div>
     </div>
   );
 }
 
-// --- 3. Catalog Page ---
+// --- 3. Catalog Page (Fixed Background & Full Screen) ---
 function Catalog() {
   const products = JSON.parse(localStorage.getItem('userProducts') || '[]');
   const navigate = useNavigate();
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      backgroundImage: 'url("/assets/shop_bg.jpg")',
-      backgroundSize: '100% auto',
-      backgroundRepeat: 'no-repeat',
-      backgroundPosition: 'center top',
-      backgroundAttachment: 'fixed',
-      backgroundColor: '#000000',
-      padding: '20px 10px'
-    }}>
-      <h3 className="text-center mb-4 text-warning" 
-          style={{ textShadow: '2px 2px 4px #000', borderBottom: '2px solid gold', display: 'inline-block', paddingBottom: '5px' }}>
-        VIP COLLECTION
-      </h3>
+    <div className="min-vh-100 position-relative" style={{padding: '80px 15px 20px'}}>
+      
+      {/* Fixed Full Background (Parallax Effect) */}
+      <div className="position-fixed top-0 start-0 w-100 h-100" 
+           style={{
+             backgroundImage: 'url("/assets/shop_bg.jpg")',
+             backgroundSize: 'cover', // Screen အပြည့် (Zoom Out ဖြစ်သွားမယ်)
+             backgroundPosition: 'center',
+             backgroundAttachment: 'fixed', // Scroll ဆွဲမှ အနောက်က လိုက်ပြောင်းမယ် (No dizziness)
+             filter: 'brightness(0.5)',
+             zIndex: -1
+           }}></div>
 
-      <div className="row g-3">
+      {/* Header */}
+      <div className="position-absolute top-0 start-0 w-100 p-3 text-center glass-card" style={{zIndex: 10}}>
+        <h4 className="text-warning m-0" style={{letterSpacing: '2px', textShadow: '1px 1px 2px black'}}>VIP COLLECTION</h4>
+      </div>
+
+      <div className="row g-3 mt-2">
         {products.map(item => (
           <div className="col-6 col-md-4" key={item.id} onClick={() => navigate(`/product/${item.id}`)}>
-            <div className="card h-100 shadow border-warning" style={{backgroundColor: 'rgba(0, 0, 0, 0.6)'}}> 
-              <div style={{height: '160px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '5px'}}>
+            <div className="card h-100 border-0 glass-card shadow-lg" style={{overflow: 'hidden'}}> 
+              <div style={{height: '180px', position: 'relative'}}>
                  <img src={item.image} alt={item.name} 
-                      style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '5px'}} 
+                      style={{width: '100%', height: '100%', objectFit: 'cover'}} 
                  />
+                 <div className="position-absolute top-0 start-0 w-100 h-100" 
+                      style={{background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'}}></div>
               </div>
-              <div className="card-body p-2 text-center text-white">
-                <small className="fw-bold d-block text-truncate text-warning">{item.name}</small>
-                <small className="text-light" style={{fontSize: '10px'}}>Click to View</small>
+              <div className="card-body p-2 text-center text-white position-relative">
+                <small className="fw-bold d-block text-truncate text-warning mb-1">{item.name}</small>
+                <span className="badge bg-warning text-dark rounded-pill" style={{fontSize: '9px'}}>3D VIEW</span>
               </div>
             </div>
           </div>
@@ -181,7 +212,6 @@ function ProductDetail() {
   return (
     <div className="container-fluid min-vh-100 bg-black text-white p-0">
       <button onClick={() => navigate(-1)} className="btn btn-sm btn-outline-warning m-3 position-absolute" style={{zIndex: 100}}>← Back</button>
-
       <div style={{height: '55vh', background: '#111', position: 'relative', overflow: 'hidden'}}>
         <TransformWrapper initialScale={1} minScale={1} maxScale={4} centerOnInit={true}>
           {({ zoomIn, zoomOut, resetTransform }) => (
@@ -198,9 +228,7 @@ function ProductDetail() {
           )}
         </TransformWrapper>
       </div>
-      
       <div className="text-center text-secondary small py-1 bg-dark border-bottom border-secondary">Use buttons (+/-) or Pinch to Inspect 3D Details</div>
-
       <div className="p-4">
         <h2 className="text-warning mb-1">{product.name}</h2>
         <div className="d-flex gap-3 text-secondary mb-3 small">
