@@ -3,21 +3,21 @@ import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from '
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
 
-// --- GLOBAL STYLES & ANIMATIONS ---
+// --- GLOBAL STYLES ---
 const globalStyles = `
-  /* ငါးကလေး ကူးခတ်နေသော Animation (Swimming) */
-  @keyframes swimFloat {
-    0% { transform: translateY(0) rotate(0deg); }
-    25% { transform: translateY(-8px) rotate(2deg); } /* အပေါ်တက်ပြီး ညာစောင်း */
-    50% { transform: translateY(0) rotate(0deg); }
-    75% { transform: translateY(8px) rotate(-2deg); } /* အောက်ဆင်းပြီး ဘယ်စောင်း */
-    100% { transform: translateY(0) rotate(0deg); }
+  /* ငါးရေကူးသော Animation (Splash Screen Only) */
+  @keyframes swim {
+    0% { transform: translateY(0) rotate(0deg) scale(1); }
+    25% { transform: translateY(-15px) rotate(5deg) scale(1.05); }
+    50% { transform: translateY(0) rotate(0deg) scale(1); }
+    75% { transform: translateY(15px) rotate(-5deg) scale(1.05); }
+    100% { transform: translateY(0) rotate(0deg) scale(1); }
   }
   
-  /* Glass Card Effect */
+  /* Glass Card */
   .glass-card {
     background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+    backdrop-filter: blur(5px);
     border: 1px solid rgba(255, 215, 0, 0.3);
   }
 `;
@@ -45,7 +45,34 @@ const PRODUCT_DATA = [
     }
 ];
 
-// --- 1. Login Page (Swimming Logo) ---
+// --- 0. Splash Screen (New Feature) ---
+function Splash({ onFinish }) {
+  useEffect(() => {
+    // ၄ စက္ကန့် ကြာရင် Login Page ကို ပြောင်းမယ်
+    const timer = setTimeout(() => {
+      onFinish();
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, [onFinish]);
+
+  return (
+    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-black">
+      <style>{globalStyles}</style>
+      
+      {/* Fish Only Animation */}
+      <img src="/assets/fish.png" alt="Loading..." 
+           style={{
+             width: '150px', 
+             animation: 'swim 3s infinite ease-in-out', // ရေကူးနေမယ်
+             filter: 'drop-shadow(0 0 15px gold)' 
+           }} />
+           
+      <p className="text-warning mt-4" style={{letterSpacing: '3px', fontSize: '0.8rem'}}>LOADING LUXURY...</p>
+    </div>
+  );
+}
+
+// --- 1. Login Page (No Animation) ---
 function Login({ setAuthKey }) {
   const [inputKey, setInputKey] = useState('');
   const navigate = useNavigate();
@@ -61,23 +88,20 @@ function Login({ setAuthKey }) {
   };
 
   return (
-    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-black overflow-hidden position-relative">
-      <style>{globalStyles}</style>
+    <div className="d-flex flex-column align-items-center justify-content-center vh-100 bg-black position-relative">
       
-      {/* Swimming Logo */}
-      <img src="/assets/logo.png" alt="Logo" 
+      {/* Static Icon (No Animation) */}
+      <img src="/assets/icon.png" alt="Logo" 
            style={{
-             width: '200px', 
-             marginBottom: '30px', 
-             borderRadius: '35px',
-             // Animation ကို ဒီမှာ ချိတ်ထားတယ် (၄ စက္ကန့်ကြာမယ်၊ အဆုံးမရှိ လည်ပတ်မယ်)
-             animation: 'swimFloat 4s infinite ease-in-out',
-             boxShadow: '0 0 30px rgba(255, 215, 0, 0.2)' // ရွှေရောင်ရေလွှာ အရိပ်
+             width: '180px', 
+             marginBottom: '20px', 
+             borderRadius: '30px',
+             boxShadow: '0 0 20px rgba(255, 215, 0, 0.2)' // အရိပ်သေပဲ ရှိမယ်
            }} 
            onError={(e) => e.target.style.display='none'} />
 
-      <h1 className="display-3 fw-bold text-warning mb-2" style={{fontFamily: 'serif', letterSpacing: '3px'}}>GOLD FISH</h1>
-      <p className="lead text-light opacity-75 mb-5" style={{letterSpacing: '2px'}}>EXCLUSIVE JEWELLERY CLUB</p>
+      <h1 className="display-4 fw-bold text-warning mb-2" style={{fontFamily: 'serif', letterSpacing: '2px'}}>GOLD FISH</h1>
+      <p className="lead text-light opacity-75 mb-5" style={{fontSize: '0.9rem', letterSpacing: '3px'}}>EXCLUSIVE JEWELLERY CLUB</p>
       
       <div className="w-75" style={{maxWidth: '320px', zIndex: 10}}>
         <input 
@@ -98,7 +122,7 @@ function Login({ setAuthKey }) {
   );
 }
 
-// --- 2. Welcome Page (Static Full Screen - No Dizziness) ---
+// --- 2. Welcome Page (Full Screen) ---
 function Welcome() {
   const navigate = useNavigate();
 
@@ -108,37 +132,32 @@ function Welcome() {
   }, []);
 
   return (
-    <div className="position-relative vh-100 overflow-hidden d-flex flex-column align-items-center justify-content-center text-center">
-      
-      {/* Background (Fixed & Static) */}
-      <div className="position-absolute top-0 start-0 w-100 h-100" 
+    <div className="position-relative vh-100 d-flex flex-column align-items-center justify-content-center text-center">
+      <div className="position-fixed top-0 start-0 w-100 h-100" 
            style={{
              backgroundImage: 'url("/assets/shop_bg.jpg")',
-             backgroundSize: 'cover', // Screen အပြည့်
-             backgroundPosition: 'center', // အလယ်တည့်တည့်
+             backgroundSize: 'cover', 
+             backgroundPosition: 'center',
              zIndex: -1,
-             filter: 'brightness(0.6)' // စာဖတ်ရလွယ်အောင် နည်းနည်းမှိန်ထားမယ်
+             filter: 'brightness(0.5)'
            }}></div>
 
-      {/* Content */}
       <div style={{zIndex: 10, width: '90%'}}>
         <h1 className="mb-4" style={{
           color: '#FFD700',
           textShadow: '3px 3px 0 #000, -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000',
-          fontFamily: 'serif', fontWeight: '900', fontSize: '3rem', transform: 'scaleY(1.1)'
+          fontFamily: 'serif', fontWeight: '900', fontSize: '3.5rem', transform: 'scaleY(1.1)'
         }}>
           မင်္ဂလာပါရှင့် 🙏
         </h1>
-
         <p className="mb-5 px-2" style={{
           color: '#000000',
           textShadow: '1px 1px 0 #FFD700, -1px -1px 0 #FFD700, 1px -1px 0 #FFD700, -1px 1px 0 #FFD700',
           fontFamily: '"Playfair Display", "Times New Roman", serif',
           fontStyle: 'italic', fontWeight: 'bold', fontSize: '1.3rem', lineHeight: '1.8'
         }}>
-          <span className="fw-bold" style={{textDecoration: 'underline'}}>GOLD FISH Gems & Jewellery</span> မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ်။
+          GOLD FISH Gems & Jewellery မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ်။
         </p>
-
         <div className="d-grid gap-3 col-10 mx-auto">
           <button className="btn btn-warning btn-lg fw-bold shadow-lg rounded-pill glass-card text-white border-warning" 
                   onClick={() => navigate('/catalog')}>
@@ -153,26 +172,23 @@ function Welcome() {
   );
 }
 
-// --- 3. Catalog Page (Fixed Background & Full Screen) ---
+// --- 3. Catalog Page ---
 function Catalog() {
   const products = JSON.parse(localStorage.getItem('userProducts') || '[]');
   const navigate = useNavigate();
 
   return (
     <div className="min-vh-100 position-relative" style={{padding: '80px 15px 20px'}}>
-      
-      {/* Fixed Full Background (Parallax Effect) */}
       <div className="position-fixed top-0 start-0 w-100 h-100" 
            style={{
              backgroundImage: 'url("/assets/shop_bg.jpg")',
-             backgroundSize: 'cover', // Screen အပြည့် (Zoom Out ဖြစ်သွားမယ်)
+             backgroundSize: 'cover', 
              backgroundPosition: 'center',
-             backgroundAttachment: 'fixed', // Scroll ဆွဲမှ အနောက်က လိုက်ပြောင်းမယ် (No dizziness)
-             filter: 'brightness(0.5)',
+             backgroundAttachment: 'fixed', 
+             filter: 'brightness(0.4)',
              zIndex: -1
            }}></div>
 
-      {/* Header */}
       <div className="position-absolute top-0 start-0 w-100 p-3 text-center glass-card" style={{zIndex: 10}}>
         <h4 className="text-warning m-0" style={{letterSpacing: '2px', textShadow: '1px 1px 2px black'}}>VIP COLLECTION</h4>
       </div>
@@ -182,11 +198,8 @@ function Catalog() {
           <div className="col-6 col-md-4" key={item.id} onClick={() => navigate(`/product/${item.id}`)}>
             <div className="card h-100 border-0 glass-card shadow-lg" style={{overflow: 'hidden'}}> 
               <div style={{height: '180px', position: 'relative'}}>
-                 <img src={item.image} alt={item.name} 
-                      style={{width: '100%', height: '100%', objectFit: 'cover'}} 
-                 />
-                 <div className="position-absolute top-0 start-0 w-100 h-100" 
-                      style={{background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'}}></div>
+                 <img src={item.image} alt={item.name} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
+                 <div className="position-absolute top-0 start-0 w-100 h-100" style={{background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'}}></div>
               </div>
               <div className="card-body p-2 text-center text-white position-relative">
                 <small className="fw-bold d-block text-truncate text-warning mb-1">{item.name}</small>
@@ -246,17 +259,28 @@ function ProductDetail() {
   );
 }
 
+// --- MAIN APP (Controls Splash vs Login) ---
 function App() {
   const [authKey, setAuthKey] = useState(null);
+  const [showSplash, setShowSplash] = useState(true); // အစမှာ Splash ပြမယ်
+
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login setAuthKey={setAuthKey} />} />
-        <Route path="/welcome" element={<Welcome />} />
-        <Route path="/catalog" element={<Catalog />} />
-        <Route path="/product/:id" element={<ProductDetail />} />
-      </Routes>
-    </Router>
+    <>
+      {showSplash ? (
+        // Splash Screen ပြမယ် (၇ စက္ကန့်ကြာရင် ပျောက်မယ်)
+        <Splash onFinish={() => setShowSplash(false)} />
+      ) : (
+        // Splash ပြီးရင် Router (Login -> Welcome) အလုပ်လုပ်မယ်
+        <Router>
+          <Routes>
+            <Route path="/" element={<Login setAuthKey={setAuthKey} />} />
+            <Route path="/welcome" element={<Welcome />} />
+            <Route path="/catalog" element={<Catalog />} />
+            <Route path="/product/:id" element={<ProductDetail />} />
+          </Routes>
+        </Router>
+      )}
+    </>
   );
 }
 
