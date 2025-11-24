@@ -120,7 +120,7 @@ function Welcome() {
 
   return (
     <div
-      className="vh-100 d-flex flex-column justify-content-center align-items-center"
+      className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
       style={{
         backgroundImage: "url('/assets/shop_bg.jpg')",
         backgroundSize: "cover",
