@@ -162,7 +162,7 @@ function Welcome() {
           fontFamily: '"Playfair Display", "Times New Roman", serif',
           fontStyle: 'italic', fontWeight: 'bold', fontSize: '1.3rem', lineHeight: '1.8'
         }}>
-          GOLD FISH Gems & Jewellery မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ်။
+          GOLD FISH Gems & Jewellery မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ် ရှင့်။
         </p>
 
         <div className="d-grid gap-3 col-10 mx-auto">
@@ -180,43 +180,43 @@ function Welcome() {
 }
 
 
-// --- 3. Catalog Page (Full Screen Shop Background) ---
+// --- 3. Catalog Page (Zoom Out Fixed) ---
 function Catalog() {
   const products = JSON.parse(localStorage.getItem('userProducts') || '[]');
   const navigate = useNavigate();
 
   return (
-    <div className="min-vh-100 position-relative" style={{padding: '80px 15px 20px'}}>
+    <div style={{
+      minHeight: '100vh',
+      backgroundImage: 'url("/assets/shop_bg.jpg")',
+      // အောက်ပါ ၃ ကြောင်းက Zoom Out ဖြစ်စေမည့် အဓိက Code များဖြစ်သည်
+      backgroundSize: '100% auto', // ပုံအကျယ်ကို ဖုန်းscreen နဲ့ ကွက်တိဖြစ်စေမယ် (Zoom Out Effect)
+      backgroundRepeat: 'no-repeat', // ပုံမထပ်စေဘူး
+      backgroundPosition: 'center top', // ပုံကို အပေါ်ဘက် (မီးဆိုင်းဘက်) ကနေ စပြမယ်
       
-      {/* Background Image Fix (Full Screen & Fixed) */}
-      <div className="position-fixed top-0 start-0 w-100 h-100" 
-           style={{
-             backgroundImage: 'url("/assets/shop_bg.jpg")',
-             backgroundSize: 'cover', // Screen အပြည့် (Full View)
-             backgroundPosition: 'center',
-             backgroundRepeat: 'no-repeat',
-             backgroundAttachment: 'fixed', // Parallax Effect
-             filter: 'brightness(0.4)',
-             zIndex: -1
-           }}></div>
+      backgroundAttachment: 'fixed', // Scroll ဆွဲရင် နောက်ခံပုံ မရွေ့စေဘူး
+      backgroundColor: '#000000', // ပုံမရှိတဲ့ နေရာလွတ်ကို အမည်းရောင်ထားမယ်
+      padding: '20px 10px'
+    }}>
+      
+      {/* Header Title */}
+      <h3 className="text-center mb-4 text-warning" 
+          style={{ textShadow: '2px 2px 4px #000', borderBottom: '2px solid gold', display: 'inline-block', paddingBottom: '5px' }}>
+        VIP COLLECTION
+      </h3>
 
-      {/* Header */}
-      <div className="position-absolute top-0 start-0 w-100 p-3 text-center glass-card" style={{zIndex: 10}}>
-        <h4 className="text-warning m-0" style={{letterSpacing: '2px', textShadow: '1px 1px 2px black'}}>VIP COLLECTION</h4>
-      </div>
-
-      <div className="row g-3 mt-2">
+      <div className="row g-3">
         {products.map(item => (
           <div className="col-6 col-md-4" key={item.id} onClick={() => navigate(`/product/${item.id}`)}>
-            <div className="card h-100 border-0 glass-card shadow-lg" style={{overflow: 'hidden'}}> 
-              <div style={{height: '180px', position: 'relative'}}>
+            <div className="card h-100 shadow border-warning" style={{backgroundColor: 'rgba(0, 0, 0, 0.6)'}}> 
+              <div style={{height: '160px', background: 'transparent', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', padding: '5px'}}>
                  <img src={item.image} alt={item.name} 
-                      style={{width: '100%', height: '100%', objectFit: 'cover'}} 
+                      style={{width: '100%', height: '100%', objectFit: 'cover', borderRadius: '5px'}} 
                  />
               </div>
-              <div className="card-body p-2 text-center text-white position-relative">
-                <small className="fw-bold d-block text-truncate text-warning mb-1">{item.name}</small>
-                <span className="badge bg-warning text-dark rounded-pill" style={{fontSize: '9px'}}>3D VIEW</span>
+              <div className="card-body p-2 text-center text-white">
+                <small className="fw-bold d-block text-truncate text-warning">{item.name}</small>
+                <small className="text-light" style={{fontSize: '10px'}}>Click to View</small>
               </div>
             </div>
           </div>
@@ -225,6 +225,9 @@ function Catalog() {
     </div>
   );
 }
+
+
+
 
            
 
