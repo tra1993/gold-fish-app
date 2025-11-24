@@ -122,7 +122,7 @@ function Login({ setAuthKey }) {
   );
 }
 
-// --- 2. Welcome Page (Full Screen) ---
+// --- 2. Welcome Page (Full Screen Shop Background) ---
 function Welcome() {
   const navigate = useNavigate();
 
@@ -133,15 +133,19 @@ function Welcome() {
 
   return (
     <div className="position-relative vh-100 d-flex flex-column align-items-center justify-content-center text-center">
+      
+      {/* Background Image Fix (Full Screen & Fixed) */}
       <div className="position-fixed top-0 start-0 w-100 h-100" 
            style={{
              backgroundImage: 'url("/assets/shop_bg.jpg")',
-             backgroundSize: 'cover', 
+             backgroundSize: 'cover', // Screen အပြည့် (Full View)
              backgroundPosition: 'center',
+             backgroundRepeat: 'no-repeat',
              zIndex: -1,
-             filter: 'brightness(0.5)'
+             filter: 'brightness(0.5)' // စာပေါ်အောင် နည်းနည်းမှိန်မယ်
            }}></div>
 
+      {/* Content */}
       <div style={{zIndex: 10, width: '90%'}}>
         <h1 className="mb-4" style={{
           color: '#FFD700',
@@ -150,6 +154,7 @@ function Welcome() {
         }}>
           မင်္ဂလာပါရှင့် 🙏
         </h1>
+
         <p className="mb-5 px-2" style={{
           color: '#000000',
           textShadow: '1px 1px 0 #FFD700, -1px -1px 0 #FFD700, 1px -1px 0 #FFD700, -1px 1px 0 #FFD700',
@@ -158,6 +163,7 @@ function Welcome() {
         }}>
           GOLD FISH Gems & Jewellery မှ <br/> နွေးထွေးစွာ ကြိုဆိုပါတယ်။
         </p>
+
         <div className="d-grid gap-3 col-10 mx-auto">
           <button className="btn btn-warning btn-lg fw-bold shadow-lg rounded-pill glass-card text-white border-warning" 
                   onClick={() => navigate('/catalog')}>
@@ -172,23 +178,28 @@ function Welcome() {
   );
 }
 
-// --- 3. Catalog Page ---
+
+// --- 3. Catalog Page (Full Screen Shop Background) ---
 function Catalog() {
   const products = JSON.parse(localStorage.getItem('userProducts') || '[]');
   const navigate = useNavigate();
 
   return (
     <div className="min-vh-100 position-relative" style={{padding: '80px 15px 20px'}}>
+      
+      {/* Background Image Fix (Full Screen & Fixed) */}
       <div className="position-fixed top-0 start-0 w-100 h-100" 
            style={{
              backgroundImage: 'url("/assets/shop_bg.jpg")',
-             backgroundSize: 'cover', 
+             backgroundSize: 'cover', // Screen အပြည့် (Full View)
              backgroundPosition: 'center',
-             backgroundAttachment: 'fixed', 
+             backgroundRepeat: 'no-repeat',
+             backgroundAttachment: 'fixed', // Parallax Effect
              filter: 'brightness(0.4)',
              zIndex: -1
            }}></div>
 
+      {/* Header */}
       <div className="position-absolute top-0 start-0 w-100 p-3 text-center glass-card" style={{zIndex: 10}}>
         <h4 className="text-warning m-0" style={{letterSpacing: '2px', textShadow: '1px 1px 2px black'}}>VIP COLLECTION</h4>
       </div>
@@ -198,8 +209,9 @@ function Catalog() {
           <div className="col-6 col-md-4" key={item.id} onClick={() => navigate(`/product/${item.id}`)}>
             <div className="card h-100 border-0 glass-card shadow-lg" style={{overflow: 'hidden'}}> 
               <div style={{height: '180px', position: 'relative'}}>
-                 <img src={item.image} alt={item.name} style={{width: '100%', height: '100%', objectFit: 'cover'}} />
-                 <div className="position-absolute top-0 start-0 w-100 h-100" style={{background: 'linear-gradient(to top, rgba(0,0,0,0.8), transparent)'}}></div>
+                 <img src={item.image} alt={item.name} 
+                      style={{width: '100%', height: '100%', objectFit: 'cover'}} 
+                 />
               </div>
               <div className="card-body p-2 text-center text-white position-relative">
                 <small className="fw-bold d-block text-truncate text-warning mb-1">{item.name}</small>
@@ -212,6 +224,8 @@ function Catalog() {
     </div>
   );
 }
+
+           
 
 // --- 4. Detail Page ---
 function ProductDetail() {
