@@ -1,3 +1,266 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from "react-router-dom";
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
@@ -21,7 +284,7 @@ const PRODUCT_DATA = [
     name: "Elegant Ruby Ring",
     image: "/assets/ring1.jpg",
     audio: "/assets/ring1.mp3",
-    description: "ခေတ်ဆန်ပြီး စိန်နုအသွင်အပြင်များပါဝင်သည်။",
+    description: "ခေတ်ဆန်ပြီး လှပသည့် Design အသွင်အပြင် လက်ရာ ။",
     gold_weight: "0.8 ကျပ်သား",
     gem_type: "Ruby & Diamonds",
   },
@@ -85,7 +348,7 @@ function Login({ setAuthKey }) {
       />
 
       <h1 className="text-warning fw-bold">GOLD FISH</h1>
-      <p className="text-light opacity-75">EXCLUSIVE JEWELLERY CLUB</p>
+      <p className="text-light opacity-75">GEMS & JEWELLERY CLUB</p>
 
       <div className="w-75" style={{ maxWidth: "320px" }}>
         <input
@@ -93,7 +356,7 @@ function Login({ setAuthKey }) {
           className="form-control text-center py-3 bg-dark text-warning border-warning"
           placeholder="ENTER VIP KEY"
           value={inputKey}
-          onChange={(e) => setInputKey(e.target.value)}
+          onChange={(e) => setInputKey(e.target.value.toUpperCase())}
           style={{ borderRadius: "50px" }}
         />
         <button
@@ -120,7 +383,7 @@ function Welcome() {
 
   return (
     <div
-      className="min-vh-100 d-flex flex-column justify-content-center align-items-center"
+      className="vh-100 d-flex flex-column justify-content-center align-items-center"
       style={{
         backgroundImage: "url('/assets/shop_bg.jpg')",
         backgroundSize: "cover",
@@ -172,7 +435,7 @@ function Catalog() {
 
   return (
     <div
-      className="min-vh-100 p-3"
+      className="min-vh-100 p-3 text-white"
       style={{
         backgroundImage: "url('/assets/shop_bg.jpg')",
         backgroundSize: "cover",
@@ -181,6 +444,10 @@ function Catalog() {
         backgroundAttachment: "fixed",
       }}
     >
+      <button className="btn btn-outline-warning mb-3" onClick={() => navigate(-1)}>
+        ← Back
+      </button>
+
       <h3 className="text-center text-warning fw-bold mb-4">VIP COLLECTION</h3>
 
       <div className="row g-3">
@@ -189,10 +456,10 @@ function Catalog() {
             className="col-6 col-md-4"
             key={item.id}
             onClick={() => navigate(`/product/${item.id}`)}
+            style={{ cursor: 'pointer' }}
           >
             <div className="card bg-dark text-white border-warning shadow">
               <img src={item.image} className="card-img-top" alt={item.name} />
-
               <div className="card-body text-center">
                 <strong className="text-warning">{item.name}</strong>
                 <div className="text-light small">Tap to View</div>
@@ -214,8 +481,23 @@ function ProductDetail() {
   const product = products.find((p) => p.id == id);
   const navigate = useNavigate();
 
-  if (!product)
-    return <div className="text-center mt-5 text-warning">Loading...</div>;
+  useEffect(() => {
+    if (product && product.audio) {
+      const audio = new Audio(product.audio);
+      audio.play().catch(() => {});
+    }
+  }, [product]);
+
+  if (!product) {
+    return (
+      <div
+        className="d-flex justify-content-center align-items-center min-vh-100 text-white"
+        style={{ backgroundColor: '#000' }}
+      >
+        <div className="text-center text-warning">Product not found!</div>
+      </div>
+    );
+  }
 
   return (
     <div className="bg-dark min-vh-100 text-white">
@@ -226,8 +508,13 @@ function ProductDetail() {
         ← Back
       </button>
 
-      <TransformWrapper>
-        {({ zoomIn, zoomOut, resetTransform }) => (
+      <TransformWrapper
+        minScale={0.5}
+        maxScale={3}
+        initialScale={1}
+        wheel={{ step: 0.1 }}
+      >
+        {({ zoomIn, zoomOut, resetTransform, ...rest }) => (
           <div style={{ height: "55vh", position: "relative" }}>
             <div className="position-absolute end-0 bottom-0 m-3 d-flex flex-column gap-2">
               <button className="btn btn-light btn-sm" onClick={zoomIn}>
@@ -241,7 +528,7 @@ function ProductDetail() {
               </button>
             </div>
 
-            <TransformComponent>
+            <TransformComponent {...rest}>
               <img
                 src={product.image}
                 alt={product.name}
@@ -255,17 +542,22 @@ function ProductDetail() {
       <div className="p-3">
         <h3 className="text-warning">{product.name}</h3>
 
-        <p>
-          💎 {product.gem_type} <br />
-          ⚖️ {product.gold_weight}
+        <p className="mb-3">
+          <span role="img" aria-label="gem">💎</span> {product.gem_type} <br />
+          <span role="img" aria-label="weight">⚖️</span> {product.gold_weight}
         </p>
 
-        <audio controls src={product.audio} className="w-100 mb-3"></audio>
+        <audio controls className="w-100 mb-3">
+          <source src={product.audio} type="audio/mpeg" />
+          Your browser does not support the audio element.
+        </audio>
 
-        <p>{product.description}</p>
+        <p className="text-light">{product.description}</p>
 
         <a
           href="https://t.me/your_telegram"
+          target="_blank"
+          rel="noopener noreferrer"
           className="btn btn-warning w-100 rounded-pill"
         >
           Order Now
