@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, useNavigate, useParams } from 'react-router-dom';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { TransformWrapper, TransformComponent } from "react-zoom-pan-pinch";
+import shopBgImage from './shop_bg.jpg';
 
 // --- GLOBAL STYLES ---
 const globalStyles = `
@@ -137,7 +138,7 @@ function Welcome() {
       {/* Background Image Fix (Full Screen & Fixed) */}
       <div className="position-fixed top-0 start-0 w-100 h-100" 
            style={{
-             backgroundImage: 'url("/assets/shop_bg.jpg")',
+             backgroundImage: `url(${shopBgImage})`,
              backgroundSize: 'cover', // Screen အပြည့် (Full View)
              backgroundPosition: 'center',
              backgroundRepeat: 'no-repeat',
